@@ -6,7 +6,7 @@ import user from './assets/user.svg';
 import send from './assets/send.svg';
 import './chatapp.css';
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
 
 function ChatApp() {
   const [chatMessages, setChatMessages] = useState([]);
