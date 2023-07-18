@@ -79,25 +79,60 @@ function ChatApp() {
     }, 20);
   }
 
-  const handleSubmit = async (e) => {
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+  
+//     const prompt = promptInputRef.current.value;
+//     promptInputRef.current.value = '';
+  
+//     const prompt2 = `
+//   If they provide code, explain what is wrong with it.  Do not provide new or corrected code,
+//   just explain in words what's wrong with the code provided.  Do not solve the problem
+//   for the student.
+  
+//   If they ask a question about Python, go ahead and answer it generally, but do not provide code as part of your answer.
+//   code: \`\`\`${prompt}\`\`\`
+//   `;
+  
+//     setChatMessages((prevMessages) => [
+//       ...prevMessages,
+//       { isAi: false, value: prompt },
+//       { isAi: true, value: ' ' },
+//     ]);
+  
+//     const lastMessageIndex = chatMessages.length;
+//     const messageDiv = document.getElementById(`message-${lastMessageIndex}`);
+//     if (messageDiv) loader(messageDiv);
+  
+//     try {
+//       const completion = await fetchChatCompletion(prompt2);
+//       setChatMessages((prevMessages) => [
+//         ...prevMessages.slice(0, -1),
+//         { isAi: true, value: completion },
+//       ]);
+//     } catch (error) {
+//       console.error('Error:', error);
+//     }
+//   };
+const handleSubmit = async (e) => {
     e.preventDefault();
   
     const prompt = promptInputRef.current.value;
     promptInputRef.current.value = '';
   
     const prompt2 = `
-  If they provide code, explain what is wrong with it.  Do not provide new or corrected code,
-  just explain in words what's wrong with the code provided.  Do not solve the problem
-  for the student.
-  
-  If they ask a question about Python, go ahead and answer it generally, but do not provide code as part of your answer.
-  code: \`\`\`${prompt}\`\`\`
-  `;
+      If they provide code, explain what is wrong with it.  Do not provide new or corrected code,
+      just explain in words what's wrong with the code provided.  Do not solve the problem
+      for the student.
+    
+      If they ask a question about Python, go ahead and answer it generally, but do not provide code as part of your answer.
+      code: \`\`\`${prompt}\`\`\`
+    `;
   
     setChatMessages((prevMessages) => [
       ...prevMessages,
       { isAi: false, value: prompt },
-      { isAi: true, value: ' ' },
+      { isAi: true, value: '...' }, // Add the loading indicator
     ]);
   
     const lastMessageIndex = chatMessages.length;
