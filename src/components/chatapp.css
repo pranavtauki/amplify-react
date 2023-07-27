@@ -105,7 +105,7 @@ body {
 
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
+} 
 
 /* hides scrollbar */
 .message::-webkit-scrollbar {
@@ -148,3 +148,4 @@ form img {
   width: 30px;
   height: 30px;
 }
+
