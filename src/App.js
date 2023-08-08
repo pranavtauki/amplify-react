@@ -44,11 +44,15 @@ function App({ user }) {
   return (
     <>
       <div className="navbar">
-        <h1 className="heading">TAMU Virtual TA</h1>
-        <button onClick={handleSignOut}>Sign out</button>
+        <h1 style={{ color: 'white' }}>Welcome {user.attributes.email}</h1>
+        <div className="heading-container">
+          <h1 style={{ color: 'white' }} className="heading">TAMU Virtual TA</h1>
+        </div>
+        
+        <button class="my-red-button" onClick={handleSignOut}>Sign out</button>
       </div>
       <div className="container">
-        <h1>Hello {user.attributes.email}</h1>
+        
         <ChatApp userProfile={user.attributes.profile}/>
       </div>
     </>

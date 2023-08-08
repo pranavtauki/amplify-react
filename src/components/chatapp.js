@@ -157,6 +157,8 @@ function ChatApp({ userProfile }) {
   const [userPrompts, setUserPrompts] = useState([]);
   const promptInputRef = useRef(null);
   const chatContainerRef = useRef(null);
+  const [typingText, setTypingText] = useState('');
+  const typingTextRef = useRef('');
 
   useEffect(() => {
     chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -165,7 +167,7 @@ function ChatApp({ userProfile }) {
   async function fetchChatCompletion(message, context) {
     const configuration = new Configuration({ apiKey: OPENAI_API_KEY });
     const openai = new OpenAIApi(configuration);
-    //console.log(context);
+    console.log(context);
   
     const messages = [
       { role: 'system', content: context },
@@ -198,35 +200,49 @@ function ChatApp({ userProfile }) {
     return () => clearInterval(interval);
   }
 
-  function typeText(element, text) {
+  // function typeText(text) {
+  //   let index = 0;
+
+  //   const interval = setInterval(() => {
+  //     if (index < text.length) {
+  //       setTypingText((prevTypingText) => prevTypingText + text.charAt(index));
+  //       index++;
+  //     } else {
+  //       clearInterval(interval);
+  //     }
+  //   }, 30);
+  // } 
+
+  function typeText(text) {
+    typingTextRef.current = '';
     let index = 0;
 
     const interval = setInterval(() => {
       if (index < text.length) {
-        setChatMessages((prevMessages) => {
-          const lastMessage = prevMessages[prevMessages.length - 1];
-          const updatedMessage = { ...lastMessage, value: lastMessage.value + text.charAt(index) };
-          return [...prevMessages.slice(0, -1), updatedMessage];
-        });
+        typingTextRef.current += text.charAt(index);
+        setTypingText(typingTextRef.current);
         index++;
       } else {
         clearInterval(interval);
       }
     }, 20);
   }
+
+
   const userProfileOptions = {
-    1: `
-    If they provide code, explain what is wrong with it.  Do not provide new or corrected code,
-    just explain in words what's wrong with the code provided.  Do not solve the problem
-    for the student.
-  
-    If they ask a question about Python, go ahead and answer it generally, but do not provide code as part of your answer.
-    code:`,
-    2: 'You are a helpful thermodynamics teacher',
-    3: 'User 3'
+  1: process.env.REACT_APP_USER_PROFILE_1,
+  2: process.env.REACT_APP_USER_PROFILE_2,
+  3: process.env.REACT_APP_USER_PROFILE_3,
     // Add more profiles and their corresponding prompt2 options if needed
   };
-  
+  useEffect(() => {
+    if (typingText !== '') {
+      setChatMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1),
+        { isAi: true, value: typingText },
+      ]);
+    }
+  }, [typingText]);
 const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -240,17 +256,9 @@ const handleSubmit = async (e) => {
     const promptTest = `
     ${userProfileOptions[userProfile]}
     ${prompt}`;
-    //console.log(promptTest);
+    console.log(promptTest);
     
-    // const prompt2 = `
-    //   If they provide code, explain what is wrong with it.  Do not provide new or corrected code,
-    //   just explain in words what's wrong with the code provided.  Do not solve the problem
-    //   for the student.
     
-    //   If they ask a question about Python, go ahead and answer it generally, but do not provide code as part of your answer.
-    //   code: \`\`\`${prompt}\`\`\`
-    // `;
-  
     setChatMessages((prevMessages) => [
       ...prevMessages,
       { isAi: false, value: prompt },
@@ -278,10 +286,14 @@ const handleSubmit = async (e) => {
     
       const context = lastAiResponse ? `AI: ${lastAiResponse.value}` : '';
       const completion = await fetchChatCompletion(promptTest,context); // Pass the entire chatMessages array
-      setChatMessages((prevMessages) => [
-        ...prevMessages.slice(0, -1),
-        { isAi: true, value: completion },
-      ]);
+      // setChatMessages((prevMessages) => [
+      //   ...prevMessages.slice(0, -1),
+      //   { isAi: true, value: completion },
+      // ]);
+      setTypingText(''); // Clear the typingText state
+
+      // Call typeText to trigger the typing effect
+      typeText(completion);
 
     } catch (error) {
       console.error('Error:', error);
@@ -306,7 +318,7 @@ const handleSubmit = async (e) => {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form class="custom-form" onSubmit={handleSubmit}>
         <textarea
           name="prompt"
           rows="1"
